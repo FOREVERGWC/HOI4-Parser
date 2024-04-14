@@ -10,10 +10,15 @@ public class Demo {
         String outputPath = System.getProperty("user.dir") + "\\static\\demo.txt";
 
         ParadoxParser paradoxParser = new ParadoxParser();
-        // 读入游戏文件
         JSONObject object = paradoxParser.parse(ResourceUtil.readUtf8Str(inputPath));
-        // 对JSON进行处理
-        // 写入文件
-        FileUtil.writeUtf8String(paradoxParser.generate(object), outputPath);
+        String content = paradoxParser.generate(object);
+        String parserStr = paradoxParser.getStr(content);
+        FileUtil.writeUtf8String(parserStr, outputPath);
+
+//        // 工具库测试
+//        List<File> list = new ArrayList<>();
+//        list.add(new File("src/main/resources/static/characters/ABK.txt"));
+//        list.add(new File("src/main/resources/static/characters/AFA.txt"));
+//        Hoi4Util.CharacterUtil(list);
     }
 }

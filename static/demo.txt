@@ -1,0 +1,308 @@
+characters = {
+	CHI_chiang_kai_shek = {
+		name = "Chiang Kai-Shek [From.GetID]"
+		portraits = {
+			civilian = {
+				large = "gfx/leaders/CHI/r56_portrait_CHI_Chiang_Kai_Shek.dds"
+			}
+			civilian = {
+				small = GFX_CHI_chiang_kai_shek
+			}
+			army = {
+				large = "gfx/leaders/CHI/r56_portrait_CHI_Chiang_Kai_Shek_Army.dds"
+			}
+			army = {
+				small = GFX_CHI_chiang_kai_shek_small
+			}
+		}
+		field_marshal = {
+			traits = {
+				old_guard
+				war_hero
+				politically_connected
+				defensive_doctrine
+				logistics_wizard
+			}
+			skill = 4
+			attack_skill = 3
+			defense_skill = 3
+			planning_skill = 4
+			logistics_skill = 3
+			legacy_id = 1001
+		}
+		country_leader = {
+			ideology = the_peoples_tutelage
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				army_connections
+			}
+		}
+	}
+	CHI_hu_shih = {
+		name = CHI_hu_shih
+		portraits = {
+			civilian = {
+				large = "gfx/leaders/CHI/r56_portrait_CHI_Hu_Shih.dds"
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+		country_leader = {
+			ideology = socialism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				gentle_scholar
+			}
+		}
+	}
+	CHI_huang_qixiang = {
+		name = CHI_hu_shih
+		portraits = {
+			civilian = {
+				large = "gfx/leaders/CHI/r56_portrait_CHI_huang_qixiang.dds"
+			}
+		}
+		country_leader = {
+			ideology = marxism
+			expire = "1965.1.1"
+			id = -1
+			traits = {
+				army_connections
+			}
+		}
+		ai_will_do = {
+			factor = 0.1
+			modifier = {
+				has_legitimacy > 90
+				factor = 0
+			}
+			modifier = {
+				has_legitimacy < 50
+				factor = 3
+			}
+		}
+	}
+}
+106 = {
+	create_unit = {
+		division = "division_template = \"Makedonska Revolyutsionna Militsiya\" start_experience_factor = 0.4"
+		owner = ROOT
+	}
+	create_unit = {
+		division = "division_template = \"Makedonska Revolyutsionna Militsiya\" start_experience_factor = 0.4"
+		owner = ROOT
+	}
+	create_unit = {
+		division = "division_template = \"Makedonska Revolyutsionna Militsiya\" start_experience_factor = 0.4"
+		owner = ROOT
+	}
+}
+"HMS Furious" = {
+	cv_small_plane_airframe_0 = {
+		owner = "ENG"
+		amount = 9
+		version_name = "Hawker Nimrod"
+	}
+	cv_small_plane_naval_bomber_airframe_0 = {
+		owner = "ENG"
+		amount = 10
+		version_name = "Blackburn Shark"
+	}
+	cv_small_plane_naval_bomber_airframe_0 = {
+		owner = "ENG"
+		amount = 2
+		version_name = "Blackburn Shark"
+	}
+}

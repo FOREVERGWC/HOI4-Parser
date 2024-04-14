@@ -6,7 +6,7 @@ characters = {
 				large = "gfx/leaders/CHI/r56_portrait_CHI_Chiang_Kai_Shek.dds"
 			}
 			civilian = {
-				small = "GFX_CHI_chiang_kai_shek"
+				small = "GFX_CHI_chiang_kai_shek" # 1.多余引号
 			}
 			army = {
 				large = "gfx/leaders/CHI/r56_portrait_CHI_Chiang_Kai_Shek_Army.dds"

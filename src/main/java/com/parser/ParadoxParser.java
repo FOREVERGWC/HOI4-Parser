@@ -8,33 +8,53 @@ import cn.hutool.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
+import java.util.regex.MatchResult;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ParadoxParser {
-    private final JSONObject json = new JSONObject();
-    private final Stack<String> paths = new Stack<>();
-
     private static final int EQUAL = '=';
     private static final int POUND = '#';
+    private final JSONObject json = new JSONObject();
+    private final Stack<String> paths = new Stack<>();
+    private final Pattern commentPattern = Pattern.compile("#.*$");
+    private final Pattern tabPattern = Pattern.compile("\t");
+    private final Pattern quoteFixPattern = Pattern.compile("([\"\\s]\\w+?\")(\\w)");
+    private final Pattern quoteStickyPattern = Pattern.compile("\"([^\\\\]*?)\"");
+    private final Pattern bracketFixPattern = Pattern.compile("(\\s=)(\\[.+])(\\s|$)");
+    private final Pattern relationalOpsPattern = Pattern.compile("<=|>=|>|<|==");
+
+    /**
+     * 转义关系运算符
+     *
+     * @param match 匹配结果
+     * @return 转义结果
+     */
+    private static String escapeRelationalOperators(MatchResult match) {
+        return switch (match.group()) {
+            case "<=" -> "= &lte;";
+            case ">=" -> "= &gte;";
+            case ">" -> "= &gt;";
+            case "<" -> "= &lt;";
+            case "==" -> "= &eqeq;";
+            default -> match.group();
+        };
+    }
 
     public JSONObject parse(String content) {
-        content = Arrays.stream(content.split("\\r\\n|\\n|\\r"))
-                .map(line -> line.replaceAll("\t", " ")) // 空格代替制表符
-                .map(line -> line.replaceAll("([\"\\s]\\w+?\")(\\w)", "$1 $2")) // 修复引号和字符串联
-                .map(line -> line.replaceAll("\"([^\\\\]*?)\"", "\"$1\" ")) // 修复引号粘连 "Byung-il""Byung-soo""Byung-ok"
-                .map(line -> line.replaceAll("(\\s=)(\\[.+])(\\s|$)", "$1\"$2\"$3")) // 修复方括号值 [From.GetID]
-                .map(line -> StrUtil.subBefore(line, "#", false)) // 删除注释
-                .map(StrUtil::trim) // 删除缩进
-                .map(line -> line.replaceAll("<=", "= &lte;")) // 转义关系运算符
-                .map(line -> line.replaceAll(">=", "= &gte;")) // 转义关系运算符
-                .map(line -> line.replaceAll(">", "= &gt;")) // 转义关系运算符
-                .map(line -> line.replaceAll("<", "= &lt;")) // 转义关系运算符
-                .map(line -> line.replaceAll("==", "= &eqeq;")) // 转义关系运算符
-                .filter(StrUtil::isNotBlank) // 过滤空行
-                .collect(Collectors.joining("\n"));
 
-        content += "\n"; // 添加额外空行
+        content = Arrays.stream(content.split("\\r\\n|\\n|\\r")) //
+                .map(line -> commentPattern.matcher(line).replaceAll("")) // 删除注释
+                .map(line -> tabPattern.matcher(line).replaceAll(" ")) // 空格代替制表符
+                .map(line -> quoteFixPattern.matcher(line).replaceAll("$1 $2")) // 修复引号和字符串联
+                .map(line -> quoteStickyPattern.matcher(line).replaceAll("\"$1\" ")) // 修复引号粘连 "Byung-il""Byung-soo""Byung-ok"
+                .map(line -> bracketFixPattern.matcher(line).replaceAll("$1\"$2\"$3")) // 修复方括号值 [From.GetID]
+                .map(line -> relationalOpsPattern.matcher(line).replaceAll(ParadoxParser::escapeRelationalOperators)) // 转义关系运算符
+                .map(String::trim) // 删除首尾空格
+                .filter(StrUtil::isNotBlank) // 过滤空行
+                .collect(Collectors.joining("\n", "", "\n")); // 添加额外空行
 
         StringBuilder token = new StringBuilder();
 
@@ -137,6 +157,7 @@ public class ParadoxParser {
                     } else if (token.length() > 0) {
                         correctPaths(1);
                         leftHand = true;
+                        // 嵌套结构
                         setValue(json, paths, StrUtil.trim(token));
                         token.setLength(0);
                         paths.pop();
@@ -186,12 +207,11 @@ public class ParadoxParser {
 
         String[] strings = string.split("\n");
         strings = ArrayUtil.sub(strings, 1, strings.length - 1);
-        string = Arrays.stream(strings)
-                .map(line -> ReUtil.delPre("^\\s{4}", line))
+        string = Arrays.stream(strings) //
+                .map(line -> ReUtil.delPre("^\\s{4}", line)) //
                 .map(line -> line.replaceAll(",$", "")) // 去除行末逗号
                 .map(line -> line.replaceAll("\\s{4}", "\t")) // 空格转制表符
-                .collect(Collectors.joining("\n"))
-                .replaceAll("\\\\\"", "@@") // \"转@@
+                .collect(Collectors.joining("\n")).replaceAll("\\\\\"", "@@") // \"转@@
                 .replaceAll("\"", "") // 去除双引号
                 .replaceAll(": ", " = ") // 冒号转等号
                 .replaceAll("\\\\\\\\@@", "\\\\\"") // \\@@转\"
@@ -202,27 +222,35 @@ public class ParadoxParser {
                 .replaceAll("= &gt;", ">") // 转义大于号
                 .replaceAll("= &lt;", "<") // 转义小于号
                 .replaceAll("%%", "[") // 转义左中括号
-                .replaceAll("!!", "]") //转义右中括号
-        ;
-
+                .replaceAll("!!", "]"); //转义右中括号
         return string;
     }
 
-    // 处理转义嵌套结构
+    public String getStr(String content) {
+        return content.replaceAll("\\{\\n\\W+x = (\\d+)\\n\\W+y = (\\d+)\\n\\W}", "{ x = $1 y = $2 }");
+    }
+
+    /**
+     * 处理转义嵌套结构
+     *
+     * @param json JSON对象
+     * @return JSON对象
+     */
     private JSONObject handleNest(JSONObject json) {
-        for (String key : json.keySet()) {
-            Object value = json.get(key);
-            if (value instanceof String && ((String) value).contains("[")) {
-                String v = String.valueOf(value).replaceAll("\\[", "%%").replaceAll("]", "!!");
-                json.set(key, v);
-            }
-            if (value instanceof JSONObject nestedObject) {
-                if (nestedObject.containsKey("isNest") && nestedObject.getBool("isNest")) {
-                    nestedObject.remove("isNest");
-                    String v = "\"" + generate(nestedObject).replaceAll("\n", " ").replaceAll("\"", "\\\\@@") + "\"";
+        for (Map.Entry<String, Object> entry : json.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            if (value instanceof String str) {
+                if (str.contains("[")) {
+                    json.set(key, str.replace("[", "%%").replace("]", "!!"));
+                }
+            } else if (value instanceof JSONObject object) {
+                if (object.getBool("isNest", false)) {
+                    object.remove("isNest");
+                    String v = "\"" + generate(object).replace("\n", " ").replace("\"", "\\@@") + "\"";
                     json.set(key, v);
                 } else {
-                    json.set(key, handleNest(nestedObject));
+                    json.set(key, handleNest(object));
                 }
             }
         }
@@ -275,18 +303,16 @@ public class ParadoxParser {
         String[] keys = path.split("\\.");
         JSONObject currentObj = json;
         for (String key : keys) {
-            if (currentObj.containsKey(key)) {
-                Object obj = currentObj.get(key);
-                if (obj instanceof JSONObject) {
-                    currentObj = (JSONObject) obj;
-                    if (keys[keys.length - 1].equals(key)) {
-                        return obj;
-                    }
-                } else {
-                    return obj;
-                }
-            } else {
+            if (!currentObj.containsKey(key)) {
                 return null;
+            }
+            Object obj = currentObj.get(key);
+            if (!(obj instanceof JSONObject)) {
+                return obj;
+            }
+            currentObj = (JSONObject) obj;
+            if (keys[keys.length - 1].equals(key)) {
+                return obj;
             }
         }
         return null;
