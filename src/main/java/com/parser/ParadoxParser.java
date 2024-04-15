@@ -218,7 +218,7 @@ public class ParadoxParser {
                 .replaceAll("@@", "\"") // @@转双引号
                 .replaceAll("\\[", "{") // [转{
                 .replaceAll("]", "}") // ]转}
-                .replaceAll("\\$\\$[0-9a-fA-F]+", "") // 移除重复键值标识
+                .replaceAll("\\$\\$\\d+", "") // 移除重复键值标识
                 .replaceAll("= &gt;", ">") // 转义大于号
                 .replaceAll("= &lt;", "<") // 转义小于号
                 .replaceAll("%%", "[") // 转义左中括号
@@ -291,8 +291,10 @@ public class ParadoxParser {
 
     private void correctPaths(int num) {
         String splitter = "$$";
-        if (getObjectByPath(String.join(".", paths)) != null) {
-            String suffix = splitter + Integer.toHexString(num).toUpperCase();
+        String join = String.join(".", paths);
+        Object object = getObjectByPath(join);
+        if (object != null) {
+            String suffix = splitter + num;
             String lastPath = paths.pop();
             paths.push(StrUtil.subBefore(lastPath, splitter, false) + suffix);
             correctPaths(num + 1);
